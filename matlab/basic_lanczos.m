@@ -27,7 +27,7 @@ A = evec_mat * eval_mat / evec_mat;
 %     omega_0 = omega(1) = 0, 
 %     nu_1 = nu(1) = transpose([1 0 0]) for simplicity.
 
-A = [6 2 0; 2 3 1; 0 1 4];
+A = [4 1 0; 1 3 1; 0 1 2];
 % For simplicity, a general A matrix, which is constructed above by any
 % eigenvalues and eigenvectors, is not demoed here.
 % Use a manually designed A matrix instead.
