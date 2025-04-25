@@ -34,11 +34,26 @@ int main(void) {
         printf("A[%d] = %.1f\n", i, A[i]);
     }
 
+    double *x = (double*) mkl_calloc(A_dim, sizeof(double), 64);
+    double *y = (double*) mkl_calloc(A_dim, sizeof(double), 64);
+    double vals2[3] = {1.0, 0,0, 0,0};
+    memcpy(x, vals2, sizeof(vals2));
+    double alpha = 1.0;
+    double beta = 0.0;
 
+    cblas_dgemv(CblasRowMajor,   // Matrix layout
+                CblasNoTrans,    // No transpose
+                A_dim, A_dim,    // Dimensions of A
+                alpha,           // alpha
+                A, A_dim,        // A and leading dimension (lda = A_dim)
+                x, 1,            // x and incx
+                beta,            // beta
+                y, 1);           // y and incy
 
-    // void cblas_dgemv (const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE trans, const MKL_INT m, const MKL_INT n, const double alpha, const double *a, const MKL_INT lda, const double *x, const MKL_INT incx, const double beta, double *y, const MKL_INT incy);
-
-
+    printf("\ntest output\n");
+    for (int i = 0; i < A_dim; ++i) {
+        printf("A[%d] = %.1f\n", i, y[i]);
+    }
 
 
 
@@ -53,6 +68,8 @@ int main(void) {
 
     //########## free memory ##########
     mkl_free(A);
+    mkl_free(x);
+    mkl_free(y);
 
     mkl_finalize();
 
