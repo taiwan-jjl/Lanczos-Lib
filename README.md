@@ -1,11 +1,15 @@
 # Lanczos-Lib
 
-**Lanczos-Lib** is a classical and block Lanczos library on CPU and GPU in C and FORTRAN language.
+**Lanczos-Lib** is a classical and block Lanczos library on CPU and GPU in C and FORTRAN language, optimized for Intel CPU and NVIDIA GPU.
 
 ## Features
 
+- Matlab prototypes are provided for for better understanding of Lanczos algorithm.
 - Implemented with Intel MKL in CPU version.
-- Intel "Conditional Numerical Reproducibility Control" supported.
+- Intel "Conditional Numerical Reproducibility Control" is implemented.
+- [gpu]
+- [fortran]
+- [eigen-system and solver]???
 
 ## Compilation
 
