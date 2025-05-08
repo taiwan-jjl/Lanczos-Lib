@@ -1,7 +1,7 @@
-#ifndef BASIC_LANCZOS
-#define BASIC_LANCZOS
+#ifndef BASIC_LANCZOS   // include guard
+#define BASIC_LANCZOS   // include guard
 
 // Function declaration
 void basic_lanczos(void);
 
-#endif // BASIC_LANCZOS
+#endif // include guard
