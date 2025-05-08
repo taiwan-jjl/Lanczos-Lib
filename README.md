@@ -6,7 +6,7 @@
 
 - **MATLAB Prototypes**: Provided for deeper insight into the Lanczos algorithm.
 - **CPU Implementation**: Utilizes Intel MKL for high-performance numerical routines.
-- **Reproducibility Control**: Implements Intel Conditional Numerical Reproducibility (CNR) for bitwise-consistent results across runs.
+- **Reproducibility Control**: Implements Intel Conditional Numerical Reproducibility (CNR) for bitwise-consistent results across runs. Automatically detect and set to the optimal reproducibility.
 - [gpu] (TBC)
 - [fortran] (TBC)
 - [eigen-system and solver]??? (TBC)

@@ -11,14 +11,14 @@ int main(void) {
 
     //########## START Intel MKL Conditional Numerical Reproducibility Control #####
     printf("\nSTART Intel MKL Conditional Numerical Reproducibility Control\n");
-    int current = mkl_cbwr_get(MKL_CBWR_ALL );
-    int suggested = mkl_cbwr_get_auto_branch();
+    int current = mkl_cbwr_get(MKL_CBWR_ALL );              // detect current CNR status.
+    int suggested = mkl_cbwr_get_auto_branch();             // detect suggested CNR status.
 
-    print_cbwr_status("Current CBWR", current);
-    print_cbwr_status("Suggested CBWR", suggested);
-    mkl_cbwr_set (suggested);
-    current = mkl_cbwr_get(MKL_CBWR_ALL );
-    print_cbwr_status("Current CBWR", current);
+    print_cbwr_status("Current CBWR", current);             // helper fun.
+    print_cbwr_status("Suggested CBWR", suggested);         // helper fun.
+    mkl_cbwr_set (suggested);                               // set to suggested CNR status
+    current = mkl_cbwr_get(MKL_CBWR_ALL );                  // check CNR change succeeded.
+    print_cbwr_status("Current CBWR", current);             // helper fun.
     printf("END Intel MKL Conditional Numerical Reproducibility Control\n\n");
     //########## END Intel MKL Conditional Numerical Reproducibility Control #####
     
