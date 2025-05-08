@@ -4,4 +4,4 @@
 // Function declaration
 void basic_lanczos(void);
 
-#endif // include guard
+#endif                  // include guard
