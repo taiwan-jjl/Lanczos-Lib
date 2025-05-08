@@ -7,7 +7,7 @@ MKL_LIBS := -Wl,--start-group ${MKLROOT}/lib/libmkl_intel_ilp64.a ${MKLROOT}/lib
 
 # Compiler and flags
 CC := icx
-CFLAGS := -std=c2x -Wall -Wextra -O2 $(MKL_INCLUDE)
+CFLAGS := -std=c2x -Wall -Wextra -O2 $(MKL_INCLUDE)				# std is "C2X", be careful for -O3
 LDFLAGS := $(MKL_LIBS)
 
 # Project structure
