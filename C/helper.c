@@ -26,3 +26,11 @@ void print_cbwr_status(const char *label, int status) {
             break;
     }
 }
+
+void print_array_float(const char* name, const double* array, const int start, const int end) {
+    printf("%s = [", name);
+    for (int i = start; i < end; i++) {
+        printf("%.f%s", array[i], (i < end - 1) ? ", " : "");
+    }
+    printf("]\n");
+}
