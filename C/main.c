@@ -40,7 +40,7 @@ int main(void) {
     double *nu = (double*) mkl_calloc(A_dim*(A_dim+2), sizeof(double), 64);
 
 
-
+    // meeting note: A must be "symmetric" or Lanczos will break down. So, gemv or semv are noth fine. just fix to one kind. 
 
 
 
