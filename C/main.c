@@ -59,25 +59,27 @@ int main(void) {
     print_array_float("nu(0)", nu, 0, A_dim);                               // helper fun, verify "nu(0)" vector.
     print_array_float("nu(1)", nu, A_dim, (A_dim*2));                       // helper fun, verify "nu(1)" vector.
 
-    // Set Lanczos iteration stop 
-    printf("Machine epsilon for double: %.20e\n", DBL_EPSILON);
+    // Set Lanczos iteration stop criterion. To avoid "devide by zero" and numerical instability.
+    printf("\nMachine epsilon for double: %.20e\n", DBL_EPSILON);           // print out the machine epsilon for double on current environment.
+    double const Lanczos_stop_crit = 10.0*DBL_EPSILON;                      // set stop criterion = 10X "DBL_EPSILON".
+    printf("Lanczos iteration stop criterion: %.20e\n", Lanczos_stop_crit); // print out the Lanczos iteration stop criterion.
+
+    // helper variable "int Lanczos_iter": how many iterations executed
+    int Lanczos_iter = 0;
 
 
-
-
-
-
-
-
-    basic_lanczos();
+    // Run Lanczos algorithm.
+    basic_lanczos(A, nu, omega, alpha, beta, A_dim, Lanczos_stop_crit, &Lanczos_iter);
 
 
 
 
     //########## free memory ##########
     mkl_free(A);
-    // mkl_free(x);
-    // mkl_free(y);
+    mkl_free(nu);
+    mkl_free(omega);
+    mkl_free(alpha);
+    mkl_free(beta);
 
     mkl_finalize();
 
@@ -111,6 +113,10 @@ int main(void) {
     for (int i = 0; i < A_dim; ++i) {
         printf("A[%d] = %.1f\n", i, y[i]);
     }
+
+    mkl_free(x);
+    mkl_free(y);
+
 
     // meeting note: A(in real space) must be "symmetric" or Lanczos will break down. So, gemv or semv are noth fine. just fix to one kind. 
 
