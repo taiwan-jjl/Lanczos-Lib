@@ -13,6 +13,11 @@ void basic_lanczos(
 ) {
     printf("\nHello, basic_lanczos!\n");
 
+    // Start main algorithm:
+    for (int i=0; i<A_dim; i++) {
+
+    }
+
     *Lanczos_iter = 5;
 
 
