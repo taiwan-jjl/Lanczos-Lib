@@ -71,7 +71,7 @@ int main(void) {
     // Run Lanczos algorithm.
     basic_lanczos(A, nu, omega, alpha, beta, A_dim, Lanczos_stop_crit, &Lanczos_iter);
 
-
+    printf("Lanczos completed in %d iterations.\n", Lanczos_iter);
 
 
     //########## free memory ##########

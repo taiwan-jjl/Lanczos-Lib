@@ -12,4 +12,18 @@ void basic_lanczos(
     int* Lanczos_iter
 ) {
     printf("\nHello, basic_lanczos!\n");
+
+    *Lanczos_iter = 5;
+
+
+
+
+
+
+
+
+
+
+
+
 }
