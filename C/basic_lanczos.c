@@ -79,7 +79,15 @@ void basic_lanczos(
             1                           // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
         );
 
+        // STEP-4:
+        // "beta_{i+1} = || omega_{i} ||"
 
+        // STEP-4.1: BLAS L1 cblas_dnrm2, computes the Euclidean norm of a vector. (res = ||x||)
+        beta[i+1] = cblas_dnrm2(  
+            A_dim,                      // Number of elements  
+            &omega[idx1],               // Pointer to the first element of X  
+            1                           // Stride between elements of X  
+        );
 
 
 
