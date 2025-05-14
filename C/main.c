@@ -65,7 +65,7 @@ int main(void) {
     printf("Lanczos iteration stop criterion: %.20e\n", Lanczos_stop_crit); // print out the Lanczos iteration stop criterion.
 
     // Set Lanczos stop criterion check frequency. It is a balance between performance and criterion check.
-    const int Lanczos_stop_check_freq = 1;
+    const int Lanczos_stop_check_freq = 0;                                  // 0 = check every loop. 1 = check every 2 loops.
 
     // helper variable "int Lanczos_iter": how many iterations executed
     int Lanczos_iter = 0;

@@ -109,7 +109,7 @@ void basic_lanczos(
             A_dim,                      // Number of elements  
             &omega[idx1],               // source vector x
             1,                          // stride = 1
-            &nu[idx2],                  // dest   vector y
+            &nu[idx3],                  // dest   vector y
             1                           // stride = 1
         );
 
@@ -118,7 +118,7 @@ void basic_lanczos(
         cblas_dscal(
             A_dim,                      // Number of elements  
             1.0/beta[i+1],              // Scalar multiplier  
-            &nu[idx2],                  // Pointer to the first element of X  
+            &nu[idx3],                  // Pointer to the first element of X  
             1                           // Stride between elements of X  
         );
 
