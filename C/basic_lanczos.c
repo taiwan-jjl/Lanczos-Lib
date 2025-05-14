@@ -15,6 +15,8 @@ void basic_lanczos(
 ) {
     printf("\nHello, basic_lanczos!\n");
 
+    int Lanczos_stop_check_counter = 0; // Set the Lanczos_stop_check_counter.
+
     // Start main algorithm:
     for (int i=0; i<A_dim; i++) {
 
@@ -89,6 +91,15 @@ void basic_lanczos(
             1                           // Stride between elements of X  
         );
 
+        // Check Lanczos iteration stop criterion:
+        if (Lanczos_stop_check_counter < Lanczos_stop_check_freq) {
+            Lanczos_stop_check_counter++;
+        } else if (beta[i+1] < Lanczos_stop_crit) {
+            break;
+        } else {
+            Lanczos_stop_check_counter = 0;
+        }
+
         // STEP-5:
         // "nu_{i+2} = omega_{i} / beta_{i+1}"
 
@@ -111,25 +122,9 @@ void basic_lanczos(
             1                           // Stride between elements of X  
         );
 
-
-
-
-
-
-
-
+        *Lanczos_iter = i+1;
 
     }
-
-    *Lanczos_iter = 5;
-
-
-
-
-
-
-
-
 
 
 
