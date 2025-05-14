@@ -89,9 +89,27 @@ void basic_lanczos(
             1                           // Stride between elements of X  
         );
 
+        // STEP-5:
+        // "nu_{i+2} = omega_{i} / beta_{i+1}"
 
+        // STEP-5.1: BLAS L1 cblas_dcopy, copies a vector to another vector. (y = x)
+        // nu_{i+2} = omega_{i}
+        cblas_dcopy(
+            A_dim,                      // Number of elements  
+            &omega[idx1],               // source vector x
+            1,                          // stride = 1
+            &nu[idx2],                  // dest   vector y
+            1                           // stride = 1
+        );
 
-
+        // STEP-5.2: BLAS L1 cblas_dscal, computes the product of a vector by a scalar. (x = a*x)
+        // nu_{i+2} = nu_{i+2} / beta_{i+1}
+        cblas_dscal(
+            A_dim,                      // Number of elements  
+            1.0/beta[i+1],              // Scalar multiplier  
+            &nu[idx2],                  // Pointer to the first element of X  
+            1                           // Stride between elements of X  
+        );
 
 
 
