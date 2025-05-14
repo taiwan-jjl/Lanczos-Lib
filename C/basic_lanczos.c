@@ -59,8 +59,21 @@ void basic_lanczos(
         // omega_{i} = -beta_{i}*nu_{i} + omega_{i}
         cblas_daxpy(
             A_dim,                      // length
-            -1*beta[idx1],              // alpha
+            -1*beta[i],                 // alpha
             &nu[idx1],                  // x-vector in daxpy
+            1,                          // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
+            &omega[idx1],               // y-vector in daxpy
+            1                           // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
+        );
+
+        // STEP-3:
+        // "omega_{i} = omega_{i} - alpha_{i} * nu_{i+1}"
+
+        // STEP-3.1: BLAS L1 cblas_daxpy, vector-vector operation. (y := a*x + y)
+        cblas_daxpy(
+            A_dim,                      // length
+            -1*alpha[i],                // alpha
+            &nu[idx2],                  // x-vector in daxpy
             1,                          // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
             &omega[idx1],               // y-vector in daxpy
             1                           // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
@@ -78,9 +91,6 @@ void basic_lanczos(
 
 
 
-
-
-        
 
 
     }
