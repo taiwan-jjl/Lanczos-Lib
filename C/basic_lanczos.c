@@ -42,6 +42,19 @@ void basic_lanczos(
             1                           // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
         );
 
+        // STEP-2: (it is wise to use the intermediate result of STEP-1.1) (out of order execution)
+        // "alpha_{i} = nu_{i+1}^{T} * A * nu_{i+1}"
+
+        // STEP-2.1: BLAS L1 cblas_ddot, vector-vector reduction operation. (input is double, accumulation is double, output is double)
+        // alpha_{i} = nu_{i+1}^{T} * omega_{i}
+        alpha[i] = cblas_ddot(  
+            A_dim,                      // Number of elements  
+            &omega[idx1],               // Pointer to first element of X  
+            1,                          // Stride between elements of X  
+            &nu[idx2],                  // Pointer to first element of Y  
+            1                           // Stride between elements of Y  
+        );
+
         // STEP-1.2: BLAS L1 cblas_daxpy, vector-vector operation. (y := a*x + y)
         // omega_{i} = -beta_{i}*nu_{i} + omega_{i}
         cblas_daxpy(
@@ -54,6 +67,20 @@ void basic_lanczos(
         );
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
 
 
     }
