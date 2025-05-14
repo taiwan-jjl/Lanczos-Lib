@@ -24,10 +24,10 @@ void basic_lanczos(
         int idx3 = A_dim*(i+2);         // for _{i+2}
 
         // STEP-1:
-        // omega_{i} = A*nu_{i+1} - beta_{i}*nu_{i}
+        // "omega_{i} = A*nu_{i+1} - beta_{i}*nu_{i}"
         
         // STEP-1.1: BLAS L2 cblas_dsymv, Matrix-vector product using a symmetric matrix. (y := alpha*A*x + beta*y)
-        // omega_{i} = A*nu_{i+1} + beta*omega_{i}
+        // omega_{i} = A*nu_{i+1} + 0.0*omega_{i}
         cblas_dsymv(
             CblasRowMajor,              // C‐style storage
             CblasUpper,                 // indicates using the upper triangle
@@ -42,8 +42,16 @@ void basic_lanczos(
             1                           // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
         );
 
-
-
+        // STEP-1.2: BLAS L1 cblas_daxpy, vector-vector operation. (y := a*x + y)
+        // omega_{i} = -beta_{i}*nu_{i} + omega_{i}
+        cblas_daxpy(
+            A_dim,                      // length
+            -1*beta[idx1],              // alpha
+            &nu[idx1],                  // x-vector in daxpy
+            1,                          // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
+            &omega[idx1],               // y-vector in daxpy
+            1                           // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
+        );
 
 
 
