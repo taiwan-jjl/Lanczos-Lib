@@ -12,6 +12,7 @@ void basic_lanczos(
     double* beta,
     const int A_dim,
     const double Lanczos_stop_crit,
+    const int Lanczos_stop_check_freq,
     int* Lanczos_iter
 );
 

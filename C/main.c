@@ -61,15 +61,18 @@ int main(void) {
 
     // Set Lanczos iteration stop criterion. To avoid "devide by zero" and numerical instability.
     printf("\nMachine epsilon for double: %.20e\n", DBL_EPSILON);           // print out the machine epsilon for double on current environment.
-    double const Lanczos_stop_crit = 10.0*DBL_EPSILON;                      // set stop criterion = 10X "DBL_EPSILON".
+    const double Lanczos_stop_crit = 10.0*DBL_EPSILON;                      // set stop criterion = 10X "DBL_EPSILON".
     printf("Lanczos iteration stop criterion: %.20e\n", Lanczos_stop_crit); // print out the Lanczos iteration stop criterion.
+
+    // Set Lanczos stop criterion check frequency. It is a balance between performance and criterion check.
+    const int Lanczos_stop_check_freq = 100;
 
     // helper variable "int Lanczos_iter": how many iterations executed
     int Lanczos_iter = 0;
 
 
     // Run Lanczos algorithm.
-    basic_lanczos(A, nu, omega, alpha, beta, A_dim, Lanczos_stop_crit, &Lanczos_iter);
+    basic_lanczos(A, nu, omega, alpha, beta, A_dim, Lanczos_stop_crit, Lanczos_stop_check_freq, &Lanczos_iter);
 
     printf("Lanczos completed in %d iterations.\n", Lanczos_iter);
 
