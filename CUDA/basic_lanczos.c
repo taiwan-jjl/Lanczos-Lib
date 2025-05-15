@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "basic_lanczos.h"              // Include the declaration
-#include "mkl.h"
 
 void basic_lanczos(
     const double* A,
