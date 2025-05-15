@@ -58,6 +58,10 @@ int main(void) {
 
     //########## END init values ##########
 
+    //########## START GPU memory allocation and copy ##########
+
+    //########## END GPU memory allocation and copy ##########
+
 
     // Run Lanczos algorithm.
     basic_lanczos(A, nu, omega, alpha, beta, A_dim, Lanczos_stop_crit, Lanczos_stop_check_freq, &Lanczos_iter);
