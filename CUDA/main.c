@@ -1,28 +1,14 @@
-#include "basic_lanczos.h"  // Include the header for the basic_lancaos function.
+// #include "basic_lanczos.h"  // Include the header for the basic_lancaos function.
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <float.h>          // To get machine precision for double.
-#include "mkl.h"
 #include "helper.h"         // Include the helper functions.
 
 
 
 
 int main(void) {
-
-    //########## START Intel MKL Conditional Numerical Reproducibility Control #####
-    printf("\nSTART Intel MKL Conditional Numerical Reproducibility Control\n");
-    int current = mkl_cbwr_get(MKL_CBWR_ALL );              // detect current CNR status.
-    int suggested = mkl_cbwr_get_auto_branch();             // detect suggested CNR status.
-
-    print_cbwr_status("Current CBWR", current);             // helper fun.
-    print_cbwr_status("Suggested CBWR", suggested);         // helper fun.
-    mkl_cbwr_set (suggested);                               // set to suggested CNR status.
-    current = mkl_cbwr_get(MKL_CBWR_ALL );                  // check CNR change succeeded.
-    print_cbwr_status("Current CBWR", current);             // helper fun.
-    printf("END Intel MKL Conditional Numerical Reproducibility Control\n\n");
-    //########## END Intel MKL Conditional Numerical Reproducibility Control #####
-    
 
     //########## START init values ##########
 
@@ -31,7 +17,7 @@ int main(void) {
     // Small dense matrix example: A
     int A_dim = 3;                                                          // A matrix dim = 3 .
     int A_ent = A_dim*A_dim;                                                // A elements = 9 .
-    double *A = (double*) mkl_calloc(A_ent, sizeof(double), 64);            // use "mkl_calloc" and aligned to 64 bytes for AVX-512 .
+    double *A = (double*) calloc(A_ent, sizeof(double));                    // Not use "aligned_alloc" in C11 this time.
     double A_vals[9] = {4.0, 1.0, 0.0, 1.0, 3.0, 1.0, 0.0, 1.0, 2.0};       // a workaround to fastly hand put-in a matrix.
     memcpy(A, A_vals, sizeof(A_vals));                                      // init "A" matrix via "memcpy" from "A_vals" matrix.
     print_array_float("A", A, 0, A_ent);                                    // helper fun, verify "A" matrix.
@@ -42,16 +28,16 @@ int main(void) {
 
     // initial vector: nu
     // whole nu vectors: nu 1d array
-    double *nu = (double*) mkl_calloc(A_dim*(A_dim+2), sizeof(double), 64);
+    double *nu = (double*) calloc(A_dim*(A_dim+2), sizeof(double));
     // initial vector: omega
     // whole omega vectors: omega 1d array
-    double *omega = (double*) mkl_calloc(A_dim*(A_dim), sizeof(double), 64);
+    double *omega = (double*) calloc(A_dim*(A_dim), sizeof(double));
     // initial element: alpha
     // whole alpha elements: alpha 1d array
-    double *alpha = (double*) mkl_calloc(A_dim, sizeof(double), 64);
+    double *alpha = (double*) calloc(A_dim, sizeof(double));
     // initial element: beta
     // whole beta elements: beta 1d array
-    double *beta = (double*) mkl_calloc(A_dim+1, sizeof(double), 64);
+    double *beta = (double*) calloc(A_dim+1, sizeof(double));
 
     // Simple start vector nu(0)=[0,0,0] and nu(1)=[1,0,0]
     double nu_vals[3] = {1.0, 0.0, 0.0};
@@ -65,7 +51,7 @@ int main(void) {
     printf("Lanczos iteration stop criterion: %.20e\n", Lanczos_stop_crit); // print out the Lanczos iteration stop criterion.
 
     // Set Lanczos stop criterion check frequency. It is a balance between performance and criterion check.
-    const int Lanczos_stop_check_freq = 0;                                  // 0 = check every loop. 1 = check every 2 loops.
+    // const int Lanczos_stop_check_freq = 0;                                  // 0 = check every loop. 1 = check every 2 loops.
 
     // helper variable "int Lanczos_iter": how many iterations executed
     int Lanczos_iter = 0;
@@ -74,7 +60,7 @@ int main(void) {
 
 
     // Run Lanczos algorithm.
-    basic_lanczos(A, nu, omega, alpha, beta, A_dim, Lanczos_stop_crit, Lanczos_stop_check_freq, &Lanczos_iter);
+    // basic_lanczos(A, nu, omega, alpha, beta, A_dim, Lanczos_stop_crit, Lanczos_stop_check_freq, &Lanczos_iter);
 
 
     //########## START verification ##########
@@ -89,13 +75,12 @@ int main(void) {
 
 
     //########## free memory ##########
-    mkl_free(A);
-    mkl_free(nu);
-    mkl_free(omega);
-    mkl_free(alpha);
-    mkl_free(beta);
+    free(A);
+    free(nu);
+    free(omega);
+    free(alpha);
+    free(beta);
 
-    mkl_finalize();
 
     return 0;
 }

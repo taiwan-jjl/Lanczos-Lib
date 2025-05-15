@@ -1,14 +1,17 @@
 # Makefile Template
 
-# Intel MKL configuration
-#MKLROOT ?= /opt/intel/oneapi/mkl/latest
-MKL_INCLUDE := -DMKL_ILP64  -I"${MKLROOT}/include"
-MKL_LIBS := -Wl,--start-group ${MKLROOT}/lib/libmkl_intel_ilp64.a ${MKLROOT}/lib/libmkl_sequential.a ${MKLROOT}/lib/libmkl_core.a -Wl,--end-group -lpthread -lm -ldl
+#------------------------------------------------------------------------------
+# Makefile for pure-C cuBLAS app (static link) using NVIDIA HPC SDK 25.3
+# Module loaded: nvhpc
+#------------------------------------------------------------------------------
+
+# Compute capability for A3000 (Ampere, CC 8.6)
+SM       := 86
 
 # Compiler and flags
-CC := icx
-CFLAGS := -std=c2x -Wall -Wextra -O2 $(MKL_INCLUDE)				# std is "C2X", be careful for -O3
-LDFLAGS := $(MKL_LIBS)
+CC := nvc
+CFLAGS := -O2 -std=c23 -cuda -gpu=cc$(SM),sm_$(SM) -Minfo=all -tp=host	# std is "C23", be careful for -O3
+LDFLAGS := -lm -cuda -lcublas_static -lculibos
 
 # Project structure
 SRC_DIR := .#src
