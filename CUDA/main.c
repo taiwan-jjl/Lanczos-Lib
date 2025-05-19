@@ -94,7 +94,7 @@ int main(void) {
 
     //########## START GPU memory allocation and copy ##########
 
-    cudaMemcpyFromSymbol(&Lanczos_iter, &Lanczos_iter_dev, sizeof(int), 0, cudaMemcpyDeviceToHost);  // copy a symbol variable from device to host.
+    cudaMemcpyFromSymbol(&Lanczos_iter, &Lanczos_iter_dev, sizeof(int), 0, cudaMemcpyDeviceToHost); // copy a symbol variable from device to host.
                                                                                                     // cudaMemcpyFromSymbolAsync is the async version.
     cudaMemcpy(A, A_dev, A_ent *sizeof(double), cudaMemcpyDeviceToHost);                            // simplest API, but not the fastest.
     cudaMemcpy(nu, nu_dev, A_dim*(A_dim+2) *sizeof(double), cudaMemcpyDeviceToHost);                // cudaMemcpyAsync(d_data, h_data, size, cudaMemcpyHostToDevice, stream);  // Asynchronous copy

@@ -45,7 +45,7 @@ void basic_lanczos(
         // omega_{i} = A*nu_{i+1} + 0.0*omega_{i}
         cublas_alpha = 1.0;
         cublas_beta = 0.0;
-        cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_HOST);                     // important! set the right mode based on your input location.
+        cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_HOST);                                     // important! set the right mode based on your input location.
         cublasDsymv(
             handle,                     // cuBLAS handle
             CUBLAS_FILL_MODE_UPPER      // indicates using the upper triangle
@@ -65,7 +65,7 @@ void basic_lanczos(
 
         // STEP-2.1: BLAS L1 cblas_ddot, vector-vector reduction operation. (input is double, accumulation is double, output is double)
         // alpha_{i} = nu_{i+1}^{T} * omega_{i}
-        cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_DEVICE);                   // important! set the right mode based on your input location.
+        cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_DEVICE);                                   // important! set the right mode based on your input location.
         cublasDdot(
             handle,                     // cuBLAS handle  
             A_dim,                      // Number of elements  
@@ -78,9 +78,13 @@ void basic_lanczos(
 
         // STEP-1.2: BLAS L1 cblas_daxpy, vector-vector operation. (y := a*x + y)
         // omega_{i} = -beta_{i}*nu_{i} + omega_{i}
-        cblas_daxpy(
+        cudaMemcpyFromSymbol(&cublas_alpha, &beta[i], sizeof(double), 0, cudaMemcpyDeviceToHost);   // copy a symbol variable from device to host.
+        cublas_alpha = -1*cublas_alpha;                                                             // -beta_{i}
+        cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_HOST);                                     // important! set the right mode based on your input location.
+        cublasDaxpy(
+            handle,                     // cuBLAS handle  
             A_dim,                      // length
-            -1*beta[i],                 // alpha
+            &cublas_alpha,              // alpha
             &nu[idx1],                  // x-vector in daxpy
             1,                          // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
             &omega[idx1],               // y-vector in daxpy
@@ -91,9 +95,12 @@ void basic_lanczos(
         // "omega_{i} = omega_{i} - alpha_{i} * nu_{i+1}"
 
         // STEP-3.1: BLAS L1 cblas_daxpy, vector-vector operation. (y := a*x + y)
-        cblas_daxpy(
+        cudaMemcpyFromSymbol(&cublas_alpha, &alpha[i], sizeof(double), 0, cudaMemcpyDeviceToHost);  // copy a symbol variable from device to host.
+        cublas_alpha = -1*cublas_alpha;                                                             // - alpha_{i}
+        cublasDaxpy(
+            handle,                     // cuBLAS handle  
             A_dim,                      // length
-            -1*alpha[i],                // alpha
+            &cublas_alpha,              // alpha
             &nu[idx2],                  // x-vector in daxpy
             1,                          // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
             &omega[idx1],               // y-vector in daxpy
@@ -104,10 +111,13 @@ void basic_lanczos(
         // "beta_{i+1} = || omega_{i} ||"
 
         // STEP-4.1: BLAS L1 cblas_dnrm2, computes the Euclidean norm of a vector. (res = ||x||)
-        beta[i+1] = cblas_dnrm2(  
+        cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_DEVICE);                                   // important! set the right mode based on your input location.
+        cublasDnrm2(
+            handle,                     // cuBLAS handle    
             A_dim,                      // Number of elements  
             &omega[idx1],               // Pointer to the first element of X  
-            1                           // Stride between elements of X  
+            1,                          // Stride between elements of X  
+            &beta[i+1]                  // result address
         );
 
         // Check Lanczos iteration stop criterion:
