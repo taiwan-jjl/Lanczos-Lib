@@ -1,5 +1,11 @@
-#include <stdio.h>
 #include "basic_lanczos.h"              // Include the declaration
+/////
+#include <stdio.h>
+#include <stdlib.h>
+/////
+#include <cuda_runtime.h>
+#include <cublas_v2.h>
+
 
 void basic_lanczos(
     const double* A,
@@ -16,6 +22,14 @@ void basic_lanczos(
 
     int Lanczos_stop_check_counter = 0; // Set the Lanczos_stop_check_counter.
 
+    // Create and initialize cuBLAS handle
+    cublasHandle_t handle;
+    cublasCreate(&handle);
+
+    // Create cuBLAS parameter which are allowed on host memory
+    double cublas_alpha = 0.0;
+    double cublas_beta = 0.0;
+
     // Start main algorithm:
     for (int i=0; i<A_dim; i++) {
 
@@ -29,16 +43,19 @@ void basic_lanczos(
         
         // STEP-1.1: BLAS L2 cblas_dsymv, Matrix-vector product using a symmetric matrix. (y := alpha*A*x + beta*y)
         // omega_{i} = A*nu_{i+1} + 0.0*omega_{i}
-        cblas_dsymv(
-            CblasRowMajor,              // C‐style storage
-            CblasUpper,                 // indicates using the upper triangle
+        cublas_alpha = 1.0;
+        cublas_beta = 0.0;
+        cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_HOST);                     // important! set the right mode based on your input location.
+        cublasDsymv(
+            handle,                     // cuBLAS handle
+            CUBLAS_FILL_MODE_UPPER      // indicates using the upper triangle
             A_dim,                      // rows of A
-            1.0,                        // alpha
+            &cublas_alpha,              // alpha
             A,                          // your row‐major array
             A_dim,                      // “leading dimension”: the number of columns in each row
             &nu[idx2],                  // x vector
             1,                          // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
-            0.0,                        // beta
+            &cublas_beta,               // beta
             &omega[idx1],               // y vector
             1                           // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
         );
@@ -48,12 +65,15 @@ void basic_lanczos(
 
         // STEP-2.1: BLAS L1 cblas_ddot, vector-vector reduction operation. (input is double, accumulation is double, output is double)
         // alpha_{i} = nu_{i+1}^{T} * omega_{i}
-        alpha[i] = cblas_ddot(  
+        cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_DEVICE);                   // important! set the right mode based on your input location.
+        cublasDdot(
+            handle,                     // cuBLAS handle  
             A_dim,                      // Number of elements  
             &omega[idx1],               // Pointer to first element of X  
             1,                          // Stride between elements of X  
             &nu[idx2],                  // Pointer to first element of Y  
-            1                           // Stride between elements of Y  
+            1,                          // Stride between elements of Y  
+            &alpha[i]                   // result address
         );
 
         // STEP-1.2: BLAS L1 cblas_daxpy, vector-vector operation. (y := a*x + y)
