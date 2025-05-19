@@ -1,9 +1,12 @@
 #include "basic_lanczos.h"  // Include the header for the basic_lancaos function.
+#include "helper.h"         // Include the helper functions.
+/////
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <float.h>          // To get machine precision for double.
-#include "helper.h"         // Include the helper functions.
+/////
+#include <cuda_runtime.h>   // For CUDA Runtime APIs.
 
 
 
@@ -31,7 +34,7 @@ int main(void) {
     double *nu = (double*) calloc(A_dim*(A_dim+2), sizeof(double));
     // initial vector: omega
     // whole omega vectors: omega 1d array
-    double *omega = (double*) calloc(A_dim*(A_dim), sizeof(double));
+    double *omega = (double*) calloc(A_dim*A_dim, sizeof(double));
     // initial element: alpha
     // whole alpha elements: alpha 1d array
     double *alpha = (double*) calloc(A_dim, sizeof(double));
@@ -60,12 +63,46 @@ int main(void) {
 
     //########## START GPU memory allocation and copy ##########
 
+    double *A_dev = NULL;                                                   // " = NULL" is a good habit to keep.
+    double *nu_dev = NULL;
+    double *omega_dev = NULL;
+    double *alpha_dev = NULL;
+    double *beta_dev = NULL;
+    __device__ int A_dim_dev = 3;                                           // declare a device variable directly in host code.
+    __constant__ double Lanczos_stop_crit_dev = 10.0*DBL_EPSILON;
+    __constant__ int Lanczos_stop_check_freq_dev = 0; 
+    __device__ int Lanczos_iter_dev = 0;
+
+    cudaMalloc((void**)&A_dev, A_ent *sizeof(double));                      // simplest API, but not the fastest. 
+    cudaMalloc((void**)&nu_dev, A_dim*(A_dim+2) *sizeof(double));           // cudaHostAlloc(&h_data, size, cudaHostAllocDefault);  // Allocate pinned host memory
+    cudaMalloc((void**)&omega_dev, A_dim*A_dim *sizeof(double));            // future work.
+    cudaMalloc((void**)&alpha_dev, A_dim *sizeof(double));
+    cudaMalloc((void**)&beta_dev, (A_dim+1) *sizeof(double));
+
+    cudaMemcpy(A_dev, A, A_ent *sizeof(double), cudaMemcpyHostToDevice);                            // simplest API, but not the fastest.
+    cudaMemcpy(nu_dev, nu, A_dim*(A_dim+2) *sizeof(double), cudaMemcpyHostToDevice);                // cudaMemcpyAsync(d_data, h_data, size, cudaMemcpyHostToDevice, stream);  // Asynchronous copy
+    cudaMemcpy(omega_dev, omega, A_dim*A_dim *sizeof(double), cudaMemcpyHostToDevice);              // future work.
+    cudaMemcpy(alpha_dev, alpha, A_dim *sizeof(double), cudaMemcpyHostToDevice);                    // "pinned host + async device"
+    cudaMemcpy(beta_dev, beta, (A_dim+1) *sizeof(double), cudaMemcpyHostToDevice);
+
     //########## END GPU memory allocation and copy ##########
 
 
     // Run Lanczos algorithm.
-    basic_lanczos(A, nu, omega, alpha, beta, A_dim, Lanczos_stop_crit, Lanczos_stop_check_freq, &Lanczos_iter);
+    basic_lanczos(A_dev, nu_dev, omega_dev, alpha_dev, beta_dev, A_dim_dev, Lanczos_stop_crit_dev, Lanczos_stop_check_freq_dev, &Lanczos_iter_dev);
 
+
+    //########## START GPU memory allocation and copy ##########
+
+    cudaMemcpyFromSymbol(&Lanczos_iter, &Lanczos_iter_dev, sizeof(int), 0, cudaMemcpyDeviceToHost);  // copy a symbol variable from device to host.
+                                                                                                    // cudaMemcpyFromSymbolAsync is the async version.
+    cudaMemcpy(A, A_dev, A_ent *sizeof(double), cudaMemcpyDeviceToHost);                            // simplest API, but not the fastest.
+    cudaMemcpy(nu, nu_dev, A_dim*(A_dim+2) *sizeof(double), cudaMemcpyDeviceToHost);                // cudaMemcpyAsync(d_data, h_data, size, cudaMemcpyHostToDevice, stream);  // Asynchronous copy
+    cudaMemcpy(omega, omega_dev, A_dim*A_dim *sizeof(double), cudaMemcpyDeviceToHost);              // future work.
+    cudaMemcpy(alpha, alpha_dev, A_dim *sizeof(double), cudaMemcpyDeviceToHost);                    // "pinned host + async device"
+    cudaMemcpy(beta, beta_dev, (A_dim+1) *sizeof(double), cudaMemcpyDeviceToHost);
+
+    //########## END GPU memory allocation and copy ##########
 
     //########## START verification ##########
 
@@ -84,6 +121,11 @@ int main(void) {
     free(omega);
     free(alpha);
     free(beta);
+    cudafree(A_dev);
+    cudafree(nu_dev);
+    cudafree(omega_dev);
+    cudafree(alpha_dev);
+    cudafree(beta_dev);
 
 
     return 0;

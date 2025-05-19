@@ -42,6 +42,10 @@ make clean
 
 ## Future Work
 
+- More error detect and handing code.
+
+    Currently, it is omitted for code readability and simplicity.
+
 - SYMV (symmetric matrix-vector product) issue on GPU:
   - <https://icl.utk.edu/files/publications/2012/icl-utk-530-2012.pdf>
   - <https://www.researchgate.net/publication/220782116_Optimizing_symmetric_dense_matrix-vector_multiplication_on_GPUS>
@@ -49,3 +53,5 @@ make clean
   - <https://siboehm.com/articles/22/CUDA-MMM>
 
 - More initial vector (nu) methods.
+
+- Advanced memory allocation method in GPU version.
