@@ -37,4 +37,15 @@ make clean
 ```
 
 ## Function specification
+
 (TBC)
+
+## Future Work
+
+- SYMV (symmetric matrix-vector product) issue on GPU:
+  - <https://icl.utk.edu/files/publications/2012/icl-utk-530-2012.pdf>
+  - <https://www.researchgate.net/publication/220782116_Optimizing_symmetric_dense_matrix-vector_multiplication_on_GPUS>
+  - <https://arxiv.org/abs/1410.1726>
+  - <https://siboehm.com/articles/22/CUDA-MMM>
+
+- More initial vector (nu) methods.
