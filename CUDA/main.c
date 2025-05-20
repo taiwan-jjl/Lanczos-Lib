@@ -79,6 +79,12 @@ int main(void) {
     cudaMalloc((void**)&alpha_dev, A_dim *sizeof(double));
     cudaMalloc((void**)&beta_dev, (A_dim+1) *sizeof(double));
 
+    cudaMemset(A_dev, 0.0, A_ent *sizeof(double));                          // Initializes or sets device memory to a value.
+    cudaMemset(nu_dev, 0.0, A_dim*(A_dim+2) *sizeof(double));               // cudaMemset (void *devPtr, int value, size_t count)
+    cudaMemset(omega_dev, 0.0, A_dim*A_dim *sizeof(double));                // This initialization can be omitted if the host variables are fully initialized.
+    cudaMemset(alpha_dev, 0.0, A_dim *sizeof(double));                      // The following "cudaMemcpy" could be some kind of initialization.
+    cudaMemset(beta_dev, 0.0, (A_dim+1) *sizeof(double));                   // The performance timing does not include this part. 
+
     cudaMemcpy(A_dev, A, A_ent *sizeof(double), cudaMemcpyHostToDevice);                            // simplest API, but not the fastest.
     cudaMemcpy(nu_dev, nu, A_dim*(A_dim+2) *sizeof(double), cudaMemcpyHostToDevice);                // cudaMemcpyAsync(d_data, h_data, size, cudaMemcpyHostToDevice, stream);  // Asynchronous copy
     cudaMemcpy(omega_dev, omega, A_dim*A_dim *sizeof(double), cudaMemcpyHostToDevice);              // future work.
