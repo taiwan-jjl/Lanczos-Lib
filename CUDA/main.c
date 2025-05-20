@@ -68,10 +68,6 @@ int main(void) {
     double *omega_dev = NULL;
     double *alpha_dev = NULL;
     double *beta_dev = NULL;
-    // __device__ int A_dim_dev = 3;                                           // declare a device variable directly in host code.
-    // __constant__ double Lanczos_stop_crit_dev = 10.0*DBL_EPSILON;
-    // __constant__ int Lanczos_stop_check_freq_dev = 0; 
-    // __device__ int Lanczos_iter_dev = 0;
 
     cudaMalloc((void**)&A_dev, A_ent *sizeof(double));                      // simplest API, but not the fastest. 
     cudaMalloc((void**)&nu_dev, A_dim*(A_dim+2) *sizeof(double));           // cudaHostAlloc(&h_data, size, cudaHostAllocDefault);  // Allocate pinned host memory
@@ -100,8 +96,6 @@ int main(void) {
 
     //########## START GPU memory allocation and copy ##########
 
-    // cudaMemcpyFromSymbol(&Lanczos_iter, &Lanczos_iter_dev, sizeof(int), 0, cudaMemcpyDeviceToHost); // copy a symbol variable from device to host.
-                                                                                                    // cudaMemcpyFromSymbolAsync is the async version.
     cudaMemcpy(A, A_dev, A_ent *sizeof(double), cudaMemcpyDeviceToHost);                            // simplest API, but not the fastest.
     cudaMemcpy(nu, nu_dev, A_dim*(A_dim+2) *sizeof(double), cudaMemcpyDeviceToHost);                // cudaMemcpyAsync(d_data, h_data, size, cudaMemcpyHostToDevice, stream);  // Asynchronous copy
     cudaMemcpy(omega, omega_dev, A_dim*A_dim *sizeof(double), cudaMemcpyDeviceToHost);              // future work.
@@ -172,6 +166,14 @@ int main(void) {
     // meeting note: A(in real space) must be "symmetric" or Lanczos will break down. So, gemv or semv are noth fine. just fix to one kind. 
 
 
+    // __device__ int A_dim_dev = 3;                                           // declare a device variable directly in host code.
+    // __constant__ double Lanczos_stop_crit_dev = 10.0*DBL_EPSILON;
+    // __constant__ int Lanczos_stop_check_freq_dev = 0; 
+    // __device__ int Lanczos_iter_dev = 0;
 
 
+        // cudaMemcpyFromSymbol(&Lanczos_iter, &Lanczos_iter_dev, sizeof(int), 0, cudaMemcpyDeviceToHost); // copy a symbol variable from device to host.
+                                                                                                    // cudaMemcpyFromSymbolAsync is the async version.
+
+                                                                                                    
 */
