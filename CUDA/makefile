@@ -7,11 +7,12 @@
 
 # Compute capability for A3000 (Ampere, CC 8.6)
 SM       := 86
+# "-gpu=cc$(SM),sm_$(SM)", Try the new option "native" and "lto" in "nvc".
 
 # Compiler and flags
 CC := nvc
-CFLAGS := -O2 -std=c23 -cuda -gpu=cc$(SM),sm_$(SM) -Minfo=all -tp=host	# std is "C23", be careful for -O3
-LDFLAGS := -lm -cuda -lcublas -lculibos -lcudart
+CFLAGS := -O2 -std=c23 -cuda -gpu=ccnative,lto -Minfo=all -tp=host	# std is "C23", be careful for -O3
+LDFLAGS := -lm -cuda -lcublas -lculibos -lcudart -gpu=ccnative,lto
 
 # Project structure
 SRC_DIR := .#src
