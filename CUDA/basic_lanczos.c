@@ -50,10 +50,24 @@ void basic_lanczos(
         *cublas_alpha = 1.0;
         *cublas_beta = 0.0;
         cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_HOST);                                     // important! set the right mode based on your input location.
-        cublasDsymv(
+        // cublasDsymv(                    // ***SYMV version***
+        //     handle,                     // cuBLAS handle
+        //     CUBLAS_FILL_MODE_UPPER,     // indicates using the upper triangle
+        //     A_dim,                      // rows of A
+        //     cublas_alpha,               // alpha
+        //     A,                          // your row‐major array
+        //     A_dim,                      // “leading dimension”: the number of columns in each row
+        //     &nu[idx2],                  // x vector
+        //     1,                          // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
+        //     cublas_beta,                // beta
+        //     &omega[idx1],               // y vector
+        //     1                           // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
+        // );
+        cublasDgemv(                    // ***GEMV version***
             handle,                     // cuBLAS handle
-            CUBLAS_FILL_MODE_UPPER,     // indicates using the upper triangle
+            CUBLAS_OP_N,                // operation on A: no‐transpose, transpose, or conjugate‐transpose
             A_dim,                      // rows of A
+            A_dim,                      // columns of A
             cublas_alpha,               // alpha
             A,                          // your row‐major array
             A_dim,                      // “leading dimension”: the number of columns in each row
@@ -63,6 +77,7 @@ void basic_lanczos(
             &omega[idx1],               // y vector
             1                           // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
         );
+
 
         // STEP-2: (it is wise to use the intermediate result of STEP-1.1) (out of order execution)
         // "alpha_{i} = nu_{i+1}^{T} * A * nu_{i+1}"
