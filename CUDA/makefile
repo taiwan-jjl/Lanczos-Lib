@@ -11,8 +11,8 @@ SM       := 86
 
 # Compiler and flags
 CC := nvc
-CFLAGS := -O2 -std=c23 -cuda -gpu=ccnative,lto -Minfo=all -tp=host	# std is "C23", be careful for -O3
-LDFLAGS := -lm -cuda -lcublas -lculibos -lcudart -gpu=ccnative,lto
+CFLAGS := -O2 -std=c23 -cuda -gpu=ccnative,lto -Minfo=all -tp=host			# std is "C23", be careful for -O3
+LDFLAGS := -lm -cuda -gpu=ccnative,lto -lcudart -lcublas -lculibos 			# sadly, I cannot make the static link method work.
 
 # Project structure
 SRC_DIR := .#src
