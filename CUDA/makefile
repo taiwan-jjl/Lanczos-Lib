@@ -11,7 +11,7 @@ SM       := 86
 # Compiler and flags
 CC := nvc
 CFLAGS := -O2 -std=c23 -cuda -gpu=cc$(SM),sm_$(SM) -Minfo=all -tp=host	# std is "C23", be careful for -O3
-LDFLAGS := -lm -cuda -lcublas_static -lculibos
+LDFLAGS := -lm -cuda -lcublas -lculibos -lcudart
 
 # Project structure
 SRC_DIR := .#src

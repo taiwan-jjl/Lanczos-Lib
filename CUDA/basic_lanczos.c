@@ -49,7 +49,7 @@ void basic_lanczos(
         cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_HOST);                                     // important! set the right mode based on your input location.
         cublasDsymv(
             handle,                     // cuBLAS handle
-            CUBLAS_FILL_MODE_UPPER      // indicates using the upper triangle
+            CUBLAS_FILL_MODE_UPPER,     // indicates using the upper triangle
             A_dim,                      // rows of A
             &cublas_alpha,              // alpha
             A,                          // your row‐major array
@@ -155,7 +155,7 @@ void basic_lanczos(
         cublasDscal(
             handle,                     // cuBLAS handle
             A_dim,                      // Number of elements  
-            cublas_alpha,               // alpha, Scalar multiplier  
+            &cublas_alpha,              // alpha, Scalar multiplier  
             &nu[idx3],                  // Pointer to the first element of X  
             1                           // Stride between elements of X  
         );
@@ -164,7 +164,7 @@ void basic_lanczos(
 
     }
 
-
+    cublasDestroy(handle);              // remember to destory the cuBLAS handle at the end.
 
 
 }
