@@ -27,11 +27,11 @@ void basic_lanczos(
     cublasCreate(&handle);
 
     // Create cuBLAS parameter which are allowed on host memory
-    // double cublas_alpha = 0.0;
+    // double cublas_alpha = 0.0;       // This declaration does not work. It needs to be in stack memory, not heap memory.
     // double cublas_beta = 0.0;
     // double beta_val = 0.0;
-    double *cublas_alpha = (double*) calloc(1, sizeof(double));
-    double *cublas_beta = (double*) calloc(1, sizeof(double));
+    double *cublas_alpha = (double*) calloc(1, sizeof(double));         // To be in stack memory because "alpha" and "beat" are in stack.
+    double *cublas_beta = (double*) calloc(1, sizeof(double));          // No CUDA APIs to copy between stack and heap. Only stack-stack or heap-heap.
     double *beta_val = (double*) calloc(1, sizeof(double));
 
     // Start main algorithm:
@@ -54,12 +54,12 @@ void basic_lanczos(
             handle,                     // cuBLAS handle
             CUBLAS_FILL_MODE_UPPER,     // indicates using the upper triangle
             A_dim,                      // rows of A
-            cublas_alpha,              // alpha
+            cublas_alpha,               // alpha
             A,                          // your row‐major array
             A_dim,                      // “leading dimension”: the number of columns in each row
             &nu[idx2],                  // x vector
             1,                          // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
-            cublas_beta,               // beta
+            cublas_beta,                // beta
             &omega[idx1],               // y vector
             1                           // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
         );
@@ -82,13 +82,13 @@ void basic_lanczos(
 
         // STEP-1.2: BLAS L1 cblas_daxpy, vector-vector operation. (y := a*x + y)
         // omega_{i} = -beta_{i}*nu_{i} + omega_{i}
-        cudaMemcpy(cublas_alpha, &beta[i], sizeof(double), cudaMemcpyDeviceToHost);   // copy a symbol variable from device to host.
-        *cublas_alpha = -1.0*(*cublas_alpha);                                                           // -beta_{i}
+        cudaMemcpy(cublas_alpha, &beta[i], sizeof(double), cudaMemcpyDeviceToHost);                 // copy a symbol variable from device to host.
+        *cublas_alpha = -1.0*(*cublas_alpha);                                                       // -beta_{i}
         cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_HOST);                                     // important! set the right mode based on your input location.
         cublasDaxpy(
             handle,                     // cuBLAS handle  
             A_dim,                      // length
-            cublas_alpha,              // alpha
+            cublas_alpha,               // alpha
             &nu[idx1],                  // x-vector in daxpy
             1,                          // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
             &omega[idx1],               // y-vector in daxpy
@@ -99,12 +99,12 @@ void basic_lanczos(
         // "omega_{i} = omega_{i} - alpha_{i} * nu_{i+1}"
 
         // STEP-3.1: BLAS L1 cblas_daxpy, vector-vector operation. (y := a*x + y)
-        cudaMemcpy(cublas_alpha, &alpha[i], sizeof(double), cudaMemcpyDeviceToHost);  // copy a symbol variable from device to host.
-        *cublas_alpha = -1.0*(*cublas_alpha);                                                           // - alpha_{i}
+        cudaMemcpy(cublas_alpha, &alpha[i], sizeof(double), cudaMemcpyDeviceToHost);                // copy a symbol variable from device to host.
+        *cublas_alpha = -1.0*(*cublas_alpha);                                                       // - alpha_{i}
         cublasDaxpy(
             handle,                     // cuBLAS handle  
             A_dim,                      // length
-            cublas_alpha,              // alpha
+            cublas_alpha,               // alpha
             &nu[idx2],                  // x-vector in daxpy
             1,                          // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
             &omega[idx1],               // y-vector in daxpy
@@ -128,7 +128,7 @@ void basic_lanczos(
         if (Lanczos_stop_check_counter < Lanczos_stop_check_freq) {                                 // It may or may not be the optimal implementation.
             Lanczos_stop_check_counter++;
         } else {
-            cudaMemcpy(beta_val, &beta[i+1], sizeof(double), cudaMemcpyDeviceToHost); // copy a symbol variable from device to host.
+            cudaMemcpy(beta_val, &beta[i+1], sizeof(double), cudaMemcpyDeviceToHost);               // copy a symbol variable from device to host.
             if (*beta_val < Lanczos_stop_crit) {
                 break;                                                                              // break the loop
             } else{
@@ -152,13 +152,13 @@ void basic_lanczos(
 
         // STEP-5.2: BLAS L1 cblas_dscal, computes the product of a vector by a scalar. (x = a*x)
         // nu_{i+2} = nu_{i+2} / beta_{i+1}
-        cudaMemcpy(cublas_alpha, &beta[i+1], sizeof(double), cudaMemcpyDeviceToHost);  // copy a symbol variable from device to host.
-        *cublas_alpha = 1.0/(*cublas_alpha);                                                             // 1.0 / beta_{i+1}
+        cudaMemcpy(cublas_alpha, &beta[i+1], sizeof(double), cudaMemcpyDeviceToHost);               // copy a symbol variable from device to host.
+        *cublas_alpha = 1.0/(*cublas_alpha);                                                        // 1.0 / beta_{i+1}
         cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_HOST); 
         cublasDscal(
             handle,                     // cuBLAS handle
             A_dim,                      // Number of elements  
-            cublas_alpha,              // alpha, Scalar multiplier  
+            cublas_alpha,               // alpha, Scalar multiplier  
             &nu[idx3],                  // Pointer to the first element of X  
             1                           // Stride between elements of X  
         );
