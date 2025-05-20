@@ -68,10 +68,10 @@ int main(void) {
     double *omega_dev = NULL;
     double *alpha_dev = NULL;
     double *beta_dev = NULL;
-    __device__ int A_dim_dev = 3;                                           // declare a device variable directly in host code.
-    __constant__ double Lanczos_stop_crit_dev = 10.0*DBL_EPSILON;
-    __constant__ int Lanczos_stop_check_freq_dev = 0; 
-    __device__ int Lanczos_iter_dev = 0;
+    // __device__ int A_dim_dev = 3;                                           // declare a device variable directly in host code.
+    // __constant__ double Lanczos_stop_crit_dev = 10.0*DBL_EPSILON;
+    // __constant__ int Lanczos_stop_check_freq_dev = 0; 
+    // __device__ int Lanczos_iter_dev = 0;
 
     cudaMalloc((void**)&A_dev, A_ent *sizeof(double));                      // simplest API, but not the fastest. 
     cudaMalloc((void**)&nu_dev, A_dim*(A_dim+2) *sizeof(double));           // cudaHostAlloc(&h_data, size, cudaHostAllocDefault);  // Allocate pinned host memory
@@ -95,7 +95,7 @@ int main(void) {
 
 
     // Run Lanczos algorithm.
-    basic_lanczos(A_dev, nu_dev, omega_dev, alpha_dev, beta_dev, A_dim_dev, Lanczos_stop_crit_dev, Lanczos_stop_check_freq_dev, &Lanczos_iter_dev);
+    basic_lanczos(A_dev, nu_dev, omega_dev, alpha_dev, beta_dev, A_dim, Lanczos_stop_crit, Lanczos_stop_check_freq, &Lanczos_iter);
 
 
     //########## START GPU memory allocation and copy ##########

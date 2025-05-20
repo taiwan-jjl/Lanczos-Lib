@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 /////
-#include <cuda_runtime.h>
-#include <cublas_v2.h>
+#include <cuda_runtime.h>               // For CUDA Runtime APIs.
+#include <cublas_v2.h>                  // For cuBLAS APIs.
 
 
 void basic_lanczos(
@@ -29,6 +29,7 @@ void basic_lanczos(
     // Create cuBLAS parameter which are allowed on host memory
     double cublas_alpha = 0.0;
     double cublas_beta = 0.0;
+    double beta_val = 0.0;
 
     // Start main algorithm:
     for (int i=0; i<A_dim; i++) {
@@ -79,7 +80,7 @@ void basic_lanczos(
         // STEP-1.2: BLAS L1 cblas_daxpy, vector-vector operation. (y := a*x + y)
         // omega_{i} = -beta_{i}*nu_{i} + omega_{i}
         cudaMemcpyFromSymbol(&cublas_alpha, &beta[i], sizeof(double), 0, cudaMemcpyDeviceToHost);   // copy a symbol variable from device to host.
-        cublas_alpha = -1*cublas_alpha;                                                             // -beta_{i}
+        cublas_alpha = -1.0*cublas_alpha;                                                           // -beta_{i}
         cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_HOST);                                     // important! set the right mode based on your input location.
         cublasDaxpy(
             handle,                     // cuBLAS handle  
@@ -96,7 +97,7 @@ void basic_lanczos(
 
         // STEP-3.1: BLAS L1 cblas_daxpy, vector-vector operation. (y := a*x + y)
         cudaMemcpyFromSymbol(&cublas_alpha, &alpha[i], sizeof(double), 0, cudaMemcpyDeviceToHost);  // copy a symbol variable from device to host.
-        cublas_alpha = -1*cublas_alpha;                                                             // - alpha_{i}
+        cublas_alpha = -1.0*cublas_alpha;                                                           // - alpha_{i}
         cublasDaxpy(
             handle,                     // cuBLAS handle  
             A_dim,                      // length
@@ -120,13 +121,16 @@ void basic_lanczos(
             &beta[i+1]                  // result address
         );
 
-        // Check Lanczos iteration stop criterion:
-        if (Lanczos_stop_check_counter < Lanczos_stop_check_freq) {
+        // Check Lanczos iteration stop criterion:                                                  // I decide to do the criterion check on host. 
+        if (Lanczos_stop_check_counter < Lanczos_stop_check_freq) {                                 // It may or may not be the optimal implementation.
             Lanczos_stop_check_counter++;
-        } else if (beta[i+1] < Lanczos_stop_crit) {
-            break;
         } else {
-            Lanczos_stop_check_counter = 0;
+            cudaMemcpyFromSymbol(&beta_val, &beta[i+1], sizeof(double), 0, cudaMemcpyDeviceToHost); // copy a symbol variable from device to host.
+            if (beta_val < Lanczos_stop_crit) {
+                break;                                                                              // break the loop
+            } else{
+                Lanczos_stop_check_counter = 0;                                                     // reset counter
+            }
         }
 
         // STEP-5:
@@ -134,7 +138,8 @@ void basic_lanczos(
 
         // STEP-5.1: BLAS L1 cblas_dcopy, copies a vector to another vector. (y = x)
         // nu_{i+2} = omega_{i}
-        cblas_dcopy(
+        cublasDcopy(
+            handle,                     // cuBLAS handle
             A_dim,                      // Number of elements  
             &omega[idx1],               // source vector x
             1,                          // stride = 1
@@ -144,9 +149,13 @@ void basic_lanczos(
 
         // STEP-5.2: BLAS L1 cblas_dscal, computes the product of a vector by a scalar. (x = a*x)
         // nu_{i+2} = nu_{i+2} / beta_{i+1}
-        cblas_dscal(
+        cudaMemcpyFromSymbol(&cublas_alpha, &beta[i+1], sizeof(double), 0, cudaMemcpyDeviceToHost);  // copy a symbol variable from device to host.
+        cublas_alpha = 1.0/cublas_alpha;                                                             // 1.0 / beta_{i+1}
+        cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_HOST); 
+        cublasDscal(
+            handle,                     // cuBLAS handle
             A_dim,                      // Number of elements  
-            1.0/beta[i+1],              // Scalar multiplier  
+            cublas_alpha,               // alpha, Scalar multiplier  
             &nu[idx3],                  // Pointer to the first element of X  
             1                           // Stride between elements of X  
         );
