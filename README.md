@@ -38,6 +38,8 @@ make
 make clean
 ```
 
+3. **main.c** is the tutorial for initializing and using the following Lanczos functions.
+
 ## Function specification
 
 **basic_lanczos_cpu** :
@@ -69,6 +71,36 @@ Input:
 - Lanczos_stop_crit: The Lanczos stop crition of a truncation method for checking the "beta" value to avoid the numerical break down. Default value is 10 times of `DBL_EPSILON`. `DBL_EPSILON` is the minimum precision the system guarantees for "double" on host meachine. A double float-point in stack memory.
 - Lanczos_stop_check_freq: How many Lanczos iterations the "Lanczos_stop_crit" would be checked in. Default value is `0` which means every iteration. It is a trade off between performance and correctness. An integer in stack memory.
 - Lanczos_iter: A retuen value from "basic_lanczos_cpu" function. It means how many full Lanczos iterations are executed. An integer in stack memory.
+
+**basic_lanczos_gpu** :
+
+```C
+void basic_lanczos_cpu(
+    const double* A,
+    double* nu,
+    double* omega,
+    double* alpha,
+    double* beta,
+    const int A_dim,
+    const double Lanczos_stop_crit,
+    const int Lanczos_stop_check_freq,
+    int* Lanczos_iter
+)
+```
+
+Output: none.
+
+Input:
+
+- A: "A" matrix in Lanczos algorithm. A pointer to a 1d array of double in device memory.
+- nu: "nu" vector in Lanczos algorithm. A pointer to a 1d array of double in device memory.
+- omega: "omega" vector in Lanczos algorithm. A pointer to a 1d array of double in device memory.
+- alpha: "alpha" scalar in Lanczos algorithm. A pointer to a 1d array of double in device memory.
+- beta: "beta" scalar in Lanczos algorithm. A pointer to a 1d array of double in device memory.
+- A_dim: The dimension `n` of a `n` by `n` A matrix. An integer in host memory.
+- Lanczos_stop_crit: The Lanczos stop crition of a truncation method for checking the "beta" value to avoid the numerical break down. Default value is 10 times of `DBL_EPSILON`. `DBL_EPSILON` is the minimum precision the system guarantees for "double" on host meachine. A double float-point in host memory.
+- Lanczos_stop_check_freq: How many Lanczos iterations the "Lanczos_stop_crit" would be checked in. Default value is `0` which means every iteration. It is a trade off between performance and correctness. An integer in host memory.
+- Lanczos_iter: A retuen value from "basic_lanczos_cpu" function. It means how many full Lanczos iterations are executed. An integer in host memory.
 
 ## Future Work
 
