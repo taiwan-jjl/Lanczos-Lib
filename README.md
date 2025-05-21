@@ -28,7 +28,7 @@ git clone https://github.com/taiwan-jjl/Lanczos-Lib.git
 cd Lanczos-Lib
 ```
 
-2. **Configure** (edit `Makefile` if needed)
+2. **Configure** (edit `makefile` if needed)
 
 ```bash
 # Compile and output object files and executables
