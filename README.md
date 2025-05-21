@@ -58,6 +58,18 @@ void basic_lanczos_cpu(
 
 Output: none.
 
+Input:
+
+- A: "A" matrix in Lanczos algorithm. A pointer to a 1d array of double in heap memory.
+- nu: "nu" vector in Lanczos algorithm. A pointer to a 1d array of double in heap memory.
+- omega: "omega" vector in Lanczos algorithm. A pointer to a 1d array of double in heap memory.
+- alpha: "alpha" scalar in Lanczos algorithm. A pointer to a 1d array of double in heap memory.
+- beta: "beta" scalar in Lanczos algorithm. A pointer to a 1d array of double in heap memory.
+- A_dim: The dimension `n` of a `n` by `n` A matrix. An integer in stack memory.
+- Lanczos_stop_crit: The Lanczos stop crition of a truncation method for checking the "beta" value to avoid the numerical break down. Default value is 10 times of `DBL_EPSILON`. `DBL_EPSILON` is the minimum precision the system guarantees for "double" on host meachine.
+- Lanczos_stop_check_freq: How many Lanczos iterations the "Lanczos_stop_crit" would be checked in. Default value is `0` which means every iteration. It is a trade off between performance and correctness.
+- Lanczos_iter: A retuen value from "basic_lanczos_cpu" function. It means how many full Lanczos iterations are executed.
+
 ## Future Work
 
 - More error detect and handing code.

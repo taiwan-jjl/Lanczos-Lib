@@ -27,10 +27,10 @@ void basic_lanczos_gpu(
     cublasCreate(&handle);
 
     // Create cuBLAS parameter which are allowed on host memory
-    // double cublas_alpha = 0.0;       // This declaration does not work. It needs to be in stack memory, not heap memory.
+    // double cublas_alpha = 0.0;       // This declaration does not work. It needs to be in heap memory, not stack memory.
     // double cublas_beta = 0.0;
     // double beta_val = 0.0;
-    double *cublas_alpha = (double*) calloc(1, sizeof(double));         // To be in stack memory because "alpha" and "beat" are in stack.
+    double *cublas_alpha = (double*) calloc(1, sizeof(double));         // To be in heap memory because "alpha" and "beat" are in heap.
     double *cublas_beta = (double*) calloc(1, sizeof(double));          // No CUDA APIs to copy between stack and heap. Only stack-stack or heap-heap.
     double *beta_val = (double*) calloc(1, sizeof(double));
 
