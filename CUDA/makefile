@@ -18,7 +18,7 @@ LDFLAGS := -lm -cuda -gpu=ccnative,lto -lcudart -lcublas -lculibos 			# sadly, I
 SRC_DIR := .#src
 OBJ_DIR := .#obj
 BIN_DIR := .#bin
-TARGET := $(BIN_DIR)/basic_lanczos
+TARGET := $(BIN_DIR)/basic_lanczos_gpu
 
 # Find all source files and corresponding object files
 SRCS := $(wildcard $(SRC_DIR)/*.c)

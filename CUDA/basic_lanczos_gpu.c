@@ -1,4 +1,4 @@
-#include "basic_lanczos.h"              // Include the declaration
+#include "basic_lanczos_gpu.h"              // Include the declaration
 /////
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,7 +7,7 @@
 #include <cublas_v2.h>                  // For cuBLAS APIs.
 
 
-void basic_lanczos(
+void basic_lanczos_gpu(
     const double* A,
     double* nu,
     double* omega,

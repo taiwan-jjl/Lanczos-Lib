@@ -1,4 +1,4 @@
-#include "basic_lanczos.h"  // Include the header for the basic_lancaos function.
+#include "basic_lanczos_gpu.h"  // Include the header for the basic_lancaos function.
 #include "helper.h"         // Include the helper functions.
 /////
 #include <stdio.h>
@@ -91,7 +91,7 @@ int main(void) {
 
 
     // Run Lanczos algorithm.
-    basic_lanczos(A_dev, nu_dev, omega_dev, alpha_dev, beta_dev, A_dim, Lanczos_stop_crit, Lanczos_stop_check_freq, &Lanczos_iter);
+    basic_lanczos_gpu(A_dev, nu_dev, omega_dev, alpha_dev, beta_dev, A_dim, Lanczos_stop_crit, Lanczos_stop_check_freq, &Lanczos_iter);
 
 
     //########## START GPU memory allocation and copy ##########

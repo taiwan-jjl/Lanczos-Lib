@@ -1,10 +1,10 @@
-#ifndef BASIC_LANCZOS   // include guard
-#define BASIC_LANCZOS   // include guard
+#ifndef BASIC_LANCZOS_CPU   // include guard
+#define BASIC_LANCZOS_CPU   // include guard
 
 // Function declaration
-// void basic_lanczos(void);
+// void basic_lanczos_cpu(void);
 
-void basic_lanczos(
+void basic_lanczos_cpu(
     const double* A,
     double* nu,
     double* omega,

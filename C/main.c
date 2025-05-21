@@ -1,4 +1,4 @@
-#include "basic_lanczos.h"  // Include the header for the basic_lancaos function.
+#include "basic_lanczos_cpu.h"  // Include the header for the basic_lancaos function.
 #include <stdio.h>
 #include <string.h>
 #include <float.h>          // To get machine precision for double.
@@ -74,7 +74,7 @@ int main(void) {
 
 
     // Run Lanczos algorithm.
-    basic_lanczos(A, nu, omega, alpha, beta, A_dim, Lanczos_stop_crit, Lanczos_stop_check_freq, &Lanczos_iter);
+    basic_lanczos_cpu(A, nu, omega, alpha, beta, A_dim, Lanczos_stop_crit, Lanczos_stop_check_freq, &Lanczos_iter);
 
 
     //########## START verification ##########

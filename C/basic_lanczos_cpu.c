@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include "basic_lanczos.h"              // Include the declaration
+#include "basic_lanczos_cpu.h"              // Include the declaration
 #include "mkl.h"
 
-void basic_lanczos(
+void basic_lanczos_cpu(
     const double* A,
     double* nu,
     double* omega,
