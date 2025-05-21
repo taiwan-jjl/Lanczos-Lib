@@ -5,9 +5,9 @@
 ## Features
 
 - **MATLAB Prototypes**: Provided for deeper insight into the Lanczos algorithm.
-- **CPU Implementation**: Utilizes Intel MKL for high-performance numerical routines.
+- **Intel CPU Implementation**: Utilizes Intel MKL for high-performance numerical routines.
 - **Reproducibility Control**: Implements Intel Conditional Numerical Reproducibility (CNR) for bitwise-consistent results across runs. Automatically detect and set to the optimal reproducibility.
-- [gpu] (TBC)
+- **NVIDIA GPU Implementation**: Utilizes NVIDIA cuBLAS for high-performance numerical routines.
 - [fortran] (TBC)
 - [eigen-system and solver]??? (TBC)
 
@@ -16,6 +16,8 @@
 - Make
 - Intel MKL (implemented with intel-oneapi-hpc-toolkit-2025.1.0.666)
 - Intel C and Fortran compilers (tested with intel-oneapi-hpc-toolkit-2025.1.0.666)
+- NVIDIA HPC SDK (tested with nvhpc_2025_253_Linux_x86_64_cuda_12.8, Driver 570.133.07)
+- NVIDIA cuBLAS library (implemented with nvhpc_2025_253_Linux_x86_64_cuda_12.8)
 
 ## Quick Start
 
@@ -38,7 +40,23 @@ make clean
 
 ## Function specification
 
-(TBC)
+**basic_lanczos_cpu** :
+
+```C
+void basic_lanczos_cpu(
+    const double* A,
+    double* nu,
+    double* omega,
+    double* alpha,
+    double* beta,
+    const int A_dim,
+    const double Lanczos_stop_crit,
+    const int Lanczos_stop_check_freq,
+    int* Lanczos_iter
+)
+```
+
+Output: none.
 
 ## Future Work
 
