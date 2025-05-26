@@ -40,6 +40,11 @@ make clean
 
 3. **main.c** is the tutorial for initializing and using the following Lanczos functions.
 
+## Matrix storage scheme
+
+If the input A matrix is stored in "full-matrix" scheme, switch to "GEXX" BLAS operation.
+If the input A matrix is stored in "uppler or lower triangular" scheme, switch to "SYXX" BLAS operation.
+
 ## Function specification
 
 **basic_lanczos_cpu** :
