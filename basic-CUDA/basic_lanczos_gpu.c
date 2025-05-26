@@ -63,7 +63,7 @@ void basic_lanczos_gpu(
         //     &omega[idx1],               // y vector
         //     1                           // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
         // );
-        cublasDgemv(                    // ***GEMV version***
+        cublasDgemv(                    // ***GEMV version*** Use GEMV for full-storage scheme.
             handle,                     // cuBLAS handle
             CUBLAS_OP_N,                // operation on A: no‐transpose, transpose, or conjugate‐transpose
             A_dim,                      // rows of A
