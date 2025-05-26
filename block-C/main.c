@@ -29,10 +29,13 @@ int main(void) {
     // Lanczos algorithm requires: A(input matrix), omega(pre-Lanczos vector), alpha(tridia-matrix), beta(tridia-matrix), nu(Lanczos vector),  
 
     // Small dense matrix example: A
-    int A_dim = 3;                                                          // A matrix dim = 3 .
+    int A_dim = 4;                                                          // A matrix dim = 3 .
     int A_ent = A_dim*A_dim;                                                // A elements = 9 .
     double *A = (double*) mkl_calloc(A_ent, sizeof(double), 64);            // use "mkl_calloc" and aligned to 64 bytes for AVX-512 .
-    double A_vals[9] = {4.0, 1.0, 0.0, 1.0, 3.0, 1.0, 0.0, 1.0, 2.0};       // a workaround to fastly hand put-in a matrix.
+    double A_vals[16] = {4.0, 1.0, 0.0, 1.0, 
+                         1.0, 3.0, 2.0, 0.0, 
+                         0.0, 2.0, 2.0, 1.0,
+                         1.0, 0.0, 1.0, 3.0};                               // a workaround to fastly hand put-in a matrix.
     memcpy(A, A_vals, sizeof(A_vals));                                      // init "A" matrix via "memcpy" from "A_vals" matrix.
     print_array_float("A", A, 0, A_ent);                                    // helper fun, verify "A" matrix.
 
@@ -42,22 +45,24 @@ int main(void) {
 
     // initial vector: nu
     // whole nu vectors: nu 1d array
-    double *nu = (double*) mkl_calloc(A_dim*(A_dim+2), sizeof(double), 64);
+    int block_size = 2;
+    int iter = A_dim / block_size;
+    double *nu = (double*) mkl_calloc(A_dim*block_size*(iter+2), sizeof(double), 64);
     // initial vector: omega
     // whole omega vectors: omega 1d array
     double *omega = (double*) mkl_calloc(A_dim*(A_dim), sizeof(double), 64);
     // initial element: alpha
     // whole alpha elements: alpha 1d array
-    double *alpha = (double*) mkl_calloc(A_dim, sizeof(double), 64);
+    double *alpha = (double*) mkl_calloc(iter*block_size*block_size, sizeof(double), 64);
     // initial element: beta
     // whole beta elements: beta 1d array
-    double *beta = (double*) mkl_calloc(A_dim+1, sizeof(double), 64);
+    double *beta = (double*) mkl_calloc((iter+1)*block_size*block_size, sizeof(double), 64);
 
-    // Simple start vector nu(0)=[0,0,0] and nu(1)=[1,0,0]
-    double nu_vals[3] = {1.0, 0.0, 0.0};
-    memcpy(&nu[3], nu_vals, sizeof(nu_vals));                               // init "nu(1)" vector via "memcpy" from "nu_vals" vector.
-    print_array_float("nu(0)", nu, 0, A_dim);                               // helper fun, verify "nu(0)" vector.
-    print_array_float("nu(1)", nu, A_dim, (A_dim*2));                       // helper fun, verify "nu(1)" vector.
+    // Simple start vector nu(0)=[0 0 0 0, 0 0 0 0] and nu(1)=[1 0 0 0, 0 1 0 0]
+    double nu_vals[8] = {1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0};
+    memcpy(&nu[8], nu_vals, sizeof(nu_vals));                               // init "nu(1)" vector via "memcpy" from "nu_vals" vector.
+    print_array_float("nu(0)", nu, 0, A_dim*block_size);                               // helper fun, verify "nu(0)" vector.
+    print_array_float("nu(1)", nu, A_dim*block_size, A_dim*(block_size*2));                       // helper fun, verify "nu(1)" vector.
 
     // Set Lanczos iteration stop criterion. To avoid "devide by zero" and numerical instability.
     printf("\nMachine epsilon for double: %.20e\n", DBL_EPSILON);           // print out the machine epsilon for double on current environment.
@@ -74,16 +79,16 @@ int main(void) {
 
 
     // Run Lanczos algorithm.
-    basic_lanczos_cpu(A, nu, omega, alpha, beta, A_dim, Lanczos_stop_crit, Lanczos_stop_check_freq, &Lanczos_iter);
+    // basic_lanczos_cpu(A, nu, omega, alpha, beta, A_dim, Lanczos_stop_crit, Lanczos_stop_check_freq, &Lanczos_iter);
 
 
     //########## START verification ##########
 
     printf("Lanczos completed in %d iterations.\n", Lanczos_iter);          // Check Lanczos iteration completed number.
     print_array_float("omega", omega, 0, A_ent);                            // verify "omega".
-    print_array_float("alpha", alpha, 0, A_dim);                            // verify "alpha".
-    print_array_float("beta", beta, 0, A_dim+1);                            // verify "beta".
-    print_array_float("nu", nu, 0, A_dim*(A_dim+2));                        // verify "nu".
+    print_array_float("alpha", alpha, 0, iter*block_size*block_size);                            // verify "alpha".
+    print_array_float("beta", beta, 0, (iter+1)*block_size*block_size);                            // verify "beta".
+    print_array_float("nu", nu, 0, A_dim*block_size*(iter+2));                        // verify "nu".
 
     //########## END verification ##########
 
