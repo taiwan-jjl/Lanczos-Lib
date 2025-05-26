@@ -14,7 +14,7 @@ LDFLAGS := $(MKL_LIBS)
 SRC_DIR := .#src
 OBJ_DIR := .#obj
 BIN_DIR := .#bin
-TARGET := $(BIN_DIR)/basic_lanczos_cpu
+TARGET := $(BIN_DIR)/block_lanczos_cpu
 
 # Find all source files and corresponding object files
 SRCS := $(wildcard $(SRC_DIR)/*.c)
