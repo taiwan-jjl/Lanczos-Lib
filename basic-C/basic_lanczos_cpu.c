@@ -30,18 +30,32 @@ void basic_lanczos_cpu(
         
         // STEP-1.1: BLAS L2 cblas_dsymv, Matrix-vector product using a symmetric matrix. (y := alpha*A*x + beta*y)
         // omega_{i} = A*nu_{i+1} + 0.0*omega_{i}
-        cblas_dsymv(
-            CblasRowMajor,              // C‐style storage
-            CblasUpper,                 // indicates using the upper triangle
-            A_dim,                      // rows of A
-            1.0,                        // alpha
-            A,                          // your row‐major array
-            A_dim,                      // “leading dimension”: the number of columns in each row
-            &nu[idx2],                  // x vector
-            1,                          // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
-            0.0,                        // beta
-            &omega[idx1],               // y vector
-            1                           // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
+        // cblas_dsymv( // This is for upper or lower triangular storage scheme.
+        //     CblasRowMajor,              // C‐style storage
+        //     CblasUpper,                 // indicates using the upper triangle
+        //     A_dim,                      // rows of A
+        //     1.0,                        // alpha
+        //     A,                          // your row‐major array
+        //     A_dim,                      // “leading dimension”: the number of columns in each row
+        //     &nu[idx2],                  // x vector
+        //     1,                          // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
+        //     0.0,                        // beta
+        //     &omega[idx1],               // y vector
+        //     1                           // stride. Normally 1 if your vector is contiguous; use a larger stride if picking out every k-th element.
+        // );
+        cblas_dgemv( // Use GEMV when A is full-matrix storage scheme.
+            CblasRowMajor,                 // memory layout: row-major
+            CblasNoTrans,                  // whether to transpose A
+            A_dim,                         // number of rows of A
+            A_dim,                         // number of cols of A
+            1.0,                           // scalar multiplier for A*x
+            A,                             // pointer to first element of A
+            A_dim,                         // leading dimension of A
+            &nu[idx2],                     // pointer to first element of x
+            1,                             // stride between elements of x
+            0.0,                           // scalar multiplier for y
+            &omega[idx1],                  // pointer to first element of y
+            1                              // stride between elements of y
         );
 
         // STEP-2: (it is wise to use the intermediate result of STEP-1.1) (out of order execution)

@@ -32,7 +32,7 @@ int main(void) {
     int A_dim = 3;                                                          // A matrix dim = 3 .
     int A_ent = A_dim*A_dim;                                                // A elements = 9 .
     double *A = (double*) mkl_calloc(A_ent, sizeof(double), 64);            // use "mkl_calloc" and aligned to 64 bytes for AVX-512 .
-    double A_vals[9] = {4.0, 1.0, 0.0, 1.0, 3.0, 1.0, 0.0, 1.0, 2.0};       // a workaround to fastly hand put-in a matrix.
+    double A_vals[9] = {4.0, 1.0, 0.0, 1.0, 3.0, 1.0, 0.0, 1.0, 2.0};       // a workaround to fastly hand put-in a matrix. !!!THIS IS FULL-STORAGE SCHEME!!!
     memcpy(A, A_vals, sizeof(A_vals));                                      // init "A" matrix via "memcpy" from "A_vals" matrix.
     print_array_float("A", A, 0, A_ent);                                    // helper fun, verify "A" matrix.
 
