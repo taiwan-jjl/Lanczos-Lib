@@ -42,8 +42,7 @@ make clean
 
 ## Matrix storage scheme
 
-If the input A matrix is stored in "full-matrix" scheme, switch to "GEXX" BLAS operation.
-
+If the input A matrix is stored in "full-matrix" scheme, switch to "GEXX" BLAS operation.  
 If the input A matrix is stored in "uppler or lower triangular" scheme, switch to "SYXX" BLAS operation.
 
 ## Function specification
