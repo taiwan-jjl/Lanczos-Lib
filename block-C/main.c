@@ -1,4 +1,4 @@
-#include "basic_lanczos_cpu.h"  // Include the header for the basic_lancaos function.
+#include "block_lanczos_cpu.h"  // Include the header for the basic_lancaos function.
 #include "helper.h"             // Include the helper functions.
 //////////
 #include <stdio.h>
@@ -81,7 +81,7 @@ int main(void) {
 
 
     // Run Lanczos algorithm.
-    // basic_lanczos_cpu(A, nu, omega, alpha, beta, A_dim, Lanczos_stop_crit, Lanczos_stop_check_freq, &Lanczos_iter);
+    // block_lanczos_cpu(A, nu, omega, alpha, beta, A_dim, Lanczos_stop_crit, Lanczos_stop_check_freq, &Lanczos_iter);
 
 
     //########## START verification ##########

@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include "helper.h"     // Include the declaration
+#include <stdio.h>
 #include "mkl.h"
 
 void print_cbwr_status(const char *label, int status) {

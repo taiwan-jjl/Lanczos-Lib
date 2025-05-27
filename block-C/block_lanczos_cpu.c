@@ -1,8 +1,8 @@
+#include "block_lanczos_cpu.h"              // Include the declaration
 #include <stdio.h>
-#include "basic_lanczos_cpu.h"              // Include the declaration
 #include "mkl.h"
 
-void basic_lanczos_cpu(
+void block_lanczos_cpu(
     const double* A,
     double* nu,
     double* omega,
@@ -13,7 +13,7 @@ void basic_lanczos_cpu(
     const int Lanczos_stop_check_freq,
     int* Lanczos_iter
 ) {
-    printf("\nHello, basic_lanczos!\n");
+    printf("\nHello, block_lanczos!\n");
 
     int Lanczos_stop_check_counter = 0; // Set the Lanczos_stop_check_counter.
 
